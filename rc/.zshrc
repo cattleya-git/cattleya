@@ -1,3 +1,9 @@
+# alias
+alias st="git status"
+alias ad="git add ."
+alias cm="git commit -m"
+alias lg="git log"
+
 # 補完
 autoload -U compinit
 compinit
