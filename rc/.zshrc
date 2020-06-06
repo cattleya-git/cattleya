@@ -3,6 +3,7 @@ alias st="git status"
 alias ad="git add ."
 alias cm="git commit -m"
 alias lg="git log"
+alias psh="git push origin HEAD"
 
 # 補完
 autoload -U compinit
