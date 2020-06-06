@@ -37,7 +37,7 @@ function cpp_run(){
 }
 alias -s cpp=cpp_run
 
-# .cppをShellScriptで実行
+# .csをShellScriptで実行
 function cs_compile(){
   with_echo mcs $1
 }
