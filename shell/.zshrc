@@ -61,6 +61,22 @@ function cs_run(){
 }
 alias -s cs=cs_run
 
+# .rsをShellScriptで実行
+function rs_compile(){
+  with_echo rustc $1
+}
+function rs_execute(){
+  with_echo ./$@
+}
+function rs_remove(){
+  with_echo rm $1
+}
+function rs_run(){
+  rs_file=$1
+  exe_file=${rs_file%.*}
+  rs_compile $rs_file && shift && rs_execute $exe_file $@ && rs_remove $exe_file
+}
+alias -s rs=rs_run
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
