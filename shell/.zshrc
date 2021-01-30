@@ -1,9 +1,8 @@
-# alias
-alias st="git status"
-alias ad="git add ."
-alias cm="git commit -m"
-alias lg="git log"
-alias psh="git push origin HEAD"
+alias st='git status'
+alias ad='git add .'
+alias cm='git commit -m'
+alias psh='git push origin HEAD'
+alias ni='touch'
 
 # 補完
 autoload -U compinit
@@ -19,9 +18,40 @@ colors
 # (改行)
 # 時刻 [(cyan)cd(reset)]
 # ユーザ種別
+ARCH=`uname -m`
 PROMPT="
 %*[%{${fg[cyan]}%}%~%{${reset_color}%}]
-%# "
+[%{${fg[cyan]}%}${ARCH}%{${reset_color}%}]%# "
+###
+
+# https://zenn.dev/ress/articles/069baf1c305523dfca3d
+typeset -U path PATH
+path=(
+	/opt/homebrew/bin(N-/)
+	/usr/local/bin(N-/)
+	$path
+)
+
+if [[ "${(L)$( uname -s )}" == darwin ]] && (( $+commands[arch] )); then
+	alias brew="arch -arch x86_64 /usr/local/bin/brew"
+	#compdef brew="arch -arch x86_64 /usr/local/bin/brew"
+	alias x64='exec arch -arch x86_64 "$SHELL"'
+	alias a64='exec arch -arch arm64e "$SHELL"'
+	switch-arch() {
+		if  [[ "$(uname -m)" == arm64 ]]; then
+			arch=x86_64
+		elif [[ "$(uname -m)" == x86_64 ]]; then
+			arch=arm64e
+		fi
+		exec arch -arch $arch "$SHELL"
+	}
+fi
+
+setopt magic_equal_subst
+###
+
+# aliasでも補完できる
+setopt complete_aliases
 
 # .cppをShellScriptで実行
 function with_echo(){
@@ -43,6 +73,7 @@ function cpp_run(){
   cpp_compile $cpp_file $exe_file && shift && cpp_execute $exe_file $@ && cpp_remove $exe_file
 }
 alias -s cpp=cpp_run
+###
 
 # .csをShellScriptで実行
 function cs_compile(){
@@ -60,41 +91,8 @@ function cs_run(){
   cs_compile $cs_file && shift && cs_execute $exe_file $@ && cs_remove $exe_file
 }
 alias -s cs=cs_run
+###
 
-# .rsをShellScriptで実行
-function rs_compile(){
-  with_echo rustc $1
-}
-function rs_execute(){
-  with_echo ./$@
-}
-function rs_remove(){
-  with_echo rm $1
-}
-function rs_run(){
-  rs_file=$1
-  exe_file=${rs_file%.*}
-  rs_compile $rs_file && shift && rs_execute $exe_file $@ && rs_remove $exe_file
-}
-alias -s rs=rs_run
-
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/opt/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/opt/anaconda3/etc/profile.d/conda.sh" ]; then
-        . "/opt/anaconda3/etc/profile.d/conda.sh"
-    else
-        export PATH="/opt/anaconda3/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
-
-# system-wide environment settings for zsh(1)
-if [ -x /usr/libexec/path_helper ]; then
-    eval `/usr/libexec/path_helper -s`
-fi
+# =brew installしたpythonへのalias
+alias py='python3.9'
 
